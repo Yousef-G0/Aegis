@@ -150,6 +150,7 @@
 // }
 
 import { ChevronRight, Lock, ShieldHalf, EyeOff, Radar } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -191,7 +192,7 @@ export function CtaFooter() {
         <div className="mx-auto max-w-6xl px-4 py-20 sm:py-24">
           <div className="grid gap-8 rounded-2xl border border-border bg-card p-8 sm:p-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <ShieldHalf className="size-8 text-accent" strokeWidth={2.2} />
+              <ShieldHalf className="size-8 text-lime" strokeWidth={2.2} />
               <h2 className="mt-6 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
                 Run your first scan before someone else does
               </h2>
@@ -202,7 +203,7 @@ export function CtaFooter() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
                   href="#"
-                  className="flex items-center gap-1 rounded-md bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+                  className="flex items-center gap-1 rounded-md bg-lime px-4 py-2.5 text-sm font-semibold text-lime-foreground transition-opacity hover:opacity-90"
                 >
                   Start scanning <ChevronRight className="size-4" />
                 </a>
@@ -238,7 +239,7 @@ export function CtaFooter() {
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-16">
           <div className="flex min-w-0 flex-col gap-4">
             <div className="flex items-center gap-2">
-              <ShieldHalf className="size-5 text-accent" strokeWidth={2.2} />
+              <ShieldHalf className="size-5 text-lime" strokeWidth={2.2} />
               <span className="text-lg font-semibold">Aegis</span>
             </div>
 
@@ -258,10 +259,13 @@ export function CtaFooter() {
               </a>
             </div>
 
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-accent-secondary" />
-              All systems operational
-            </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
+                <span className="size-1.5 rounded-full bg-accent-secondary" />
+                All systems operational
+              </span>
+              <ThemeToggle />
+            </div>
           </div>
 
           <nav className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm sm:grid-cols-3 lg:grid-cols-2">

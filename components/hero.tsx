@@ -158,7 +158,9 @@ export function Hero() {
 
         <h1 className="mx-auto max-w-3xl text-balance text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
           Know what attackers can see{" "}
-          <span className="font-mono text-accent">before they find it</span>
+          <span className="font-mono text-green-600 dark:text-blue-400">
+            before they find it
+          </span>
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
@@ -184,7 +186,7 @@ export function Hero() {
           <button
             type="submit"
             disabled={scanning}
-            className="flex items-center justify-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-70"
+            className="flex items-center justify-center gap-1.5 rounded-lg bg-lime px-4 py-2.5 text-sm font-semibold text-lime-foreground transition-opacity hover:opacity-90 disabled:opacity-70"
           >
             {scanning ? (
               <>
@@ -209,7 +211,7 @@ export function Hero() {
               <span
                 className={
                   "mr-1.5 inline-block size-1.5 rounded-full " +
-                  (f.tone === "accent" ? "bg-accent" : "bg-accent-secondary")
+                  (f.tone === "accent" ? "bg-lime" : "bg-accent-secondary")
                 }
               />
               {f.label}
