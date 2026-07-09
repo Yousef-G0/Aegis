@@ -41,25 +41,27 @@ export function GridDecoration() {
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* base hairline grid */}
+      {/* base hairline grid — faded and feathered */}
       <div
-        className="absolute inset-0 opacity-[0.5] dark:opacity-[0.35]"
+        className="absolute inset-0 opacity-[0.28] dark:opacity-[0.18]"
         style={{
           backgroundImage:
             "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
           backgroundSize: `${CELL}px ${CELL}px`,
-          maskImage: "radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 85%)",
+          maskImage:
+            "radial-gradient(ellipse 100% 80% at 50% 18%, black 0%, rgba(0,0,0,0.5) 35%, transparent 78%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 85%)",
+            "radial-gradient(ellipse 100% 80% at 50% 18%, black 0%, rgba(0,0,0,0.5) 35%, transparent 78%)",
         }}
       />
       {/* swept cells */}
       <svg
         className="absolute inset-0 h-full w-full"
         style={{
-          maskImage: "radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 80%)",
+          maskImage:
+            "radial-gradient(ellipse 100% 80% at 50% 18%, black 0%, rgba(0,0,0,0.5) 30%, transparent 75%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 80% 60% at 50% 20%, black 30%, transparent 80%)",
+            "radial-gradient(ellipse 100% 80% at 50% 18%, black 0%, rgba(0,0,0,0.5) 30%, transparent 75%)",
         }}
       >
         {cells.map((c, i) => (

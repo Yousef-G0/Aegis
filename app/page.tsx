@@ -6,10 +6,12 @@ import { HardwareSection } from "@/components/hardware-section"
 import { OwnStack } from "@/components/own-stack"
 import { Faq } from "@/components/faq"
 import { CtaFooter } from "@/components/cta-footer"
+import { ChatAssistant } from "@/components/chat-assistant"
 
 export default function Page() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="relative z-0 min-h-screen bg-background">
+      <div className="bg-glow pointer-events-none absolute inset-0 -z-10" aria-hidden />
       <SiteHeader />
       <Hero />
       <ResultSection />
@@ -18,6 +20,7 @@ export default function Page() {
       <OwnStack />
       <Faq />
       <CtaFooter />
+      <ChatAssistant />
     </main>
   )
 }

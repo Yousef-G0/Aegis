@@ -200,6 +200,13 @@
     background-size: 100% 1px;
     background-repeat: no-repeat;
   }
+  /* Soft radial glow wash for the whole page background */
+  .bg-glow {
+    background:
+      radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--accent-secondary) 16%, transparent), transparent 72%),
+      radial-gradient(45% 45% at 85% 28%, color-mix(in oklab, var(--accent-secondary) 10%, transparent), transparent 70%),
+      radial-gradient(50% 50% at 10% 78%, color-mix(in oklab, var(--accent-secondary) 8%, transparent), transparent 72%);
+  }
   .font-pixel {
     font-family: var(--font-pixel);
     letter-spacing: -0.02em;
