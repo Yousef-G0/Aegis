@@ -93,7 +93,6 @@
 //             <div className="flex items-center gap-2">
 //               <Logo />
 //               <span className="text-lg font-semibold">Aegis</span>
-//               <span className="text-xs text-muted-foreground">by RightNow</span>
 //             </div>
 //             <p className="mt-4 text-sm text-muted-foreground">
 //               © 2026 Aegis. All rights reserved.
