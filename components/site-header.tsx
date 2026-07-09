@@ -44,7 +44,6 @@ export function SiteHeader() {
             <span className="text-xl font-semibold tracking-tight">Aegis</span>
           </a>
           <span className="text-xs text-muted-foreground">
-            by <span className="font-medium text-foreground">RightNow</span>
           </span>
         </div>
 
