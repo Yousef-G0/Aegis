@@ -42,19 +42,14 @@ const navItems: NavItem[] = [
     label: "Solutions",
     children: [
       {
-        label: "By Industry",
-        description: "Tailored for your sector",
-        href: "/solutions/industry",
+        label: "Dark Web Monitoring",
+        description: "Catch threats across Telegram, Tor & markets",
+        href: "/solutions/dark-web-monitoring",
       },
       {
-        label: "By Role",
-        description: "Built for security teams",
-        href: "/solutions/role",
-      },
-      {
-        label: "Integrations",
-        description: "Connect your stack",
-        href: "/solutions/integrations",
+        label: "Identity Exposure Management",
+        description: "Validate & remediate leaked credentials",
+        href: "/solutions/identity-exposure-management",
       },
     ],
   },
@@ -197,11 +192,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
-          <a href="#" className="pixel-btn pixel-btn-ghost hidden sm:inline-flex">
+          <a href="/sign-in" className="pixel-btn pixel-btn-ghost hidden sm:inline-flex">
             Sign in
             <ChevronRight className="size-3.5" />
           </a>
-          <a href="#" className="pixel-btn pixel-btn-primary">
+          <a href="/sign-up" className="pixel-btn pixel-btn-primary">
             Get started
             <ChevronRight className="size-3.5" />
           </a>
