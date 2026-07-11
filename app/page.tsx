@@ -7,11 +7,12 @@ import { OwnStack } from "@/components/own-stack"
 import { Faq } from "@/components/faq"
 import { CtaFooter } from "@/components/cta-footer"
 import { ChatAssistant } from "@/components/chat-assistant"
+import { BlueprintDecorations } from "@/components/blueprint-decorations"
 
 export default function Page() {
   return (
-    <main className="relative z-0 min-h-screen bg-background">
-      <div className="bg-glow pointer-events-none absolute inset-0 -z-10" aria-hidden />
+    <main className="relative z-0 min-h-screen">
+      <BlueprintDecorations />
       <SiteHeader />
       <Hero />
       <ResultSection />
