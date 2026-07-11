@@ -153,7 +153,7 @@ export function Hero() {
       <div className="relative mx-auto max-w-6xl px-4 py-20 text-center sm:py-28">
         <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
           <span className="size-1.5 rounded-full bg-accent-secondary" />
-          Continuous exposure monitoring
+          Attack Surface &amp; Exposure Management
         </p>
 
         <h1 className="mx-auto max-w-3xl text-balance text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
@@ -164,9 +164,9 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
-          Aegis scans your external attack surface and the open, deep, and dark
-          web for exposure tied to your organization — then tells you exactly
-          what to fix first.
+          Every day your external attack surface grows — forgotten subdomains,
+          leaked keys, exposed credentials. Aegis scans it all across the open,
+          deep, and dark web, then tells you exactly what to fix first.
         </p>
 
         {/* Scan input */}

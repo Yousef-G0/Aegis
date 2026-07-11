@@ -138,12 +138,12 @@ export default function CtiPlatformPage() {
           <div>
             <Eyebrow>Cyber Threat Intelligence Platform</Eyebrow>
             <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
-              See every exposure before it becomes a{" "}
-              <span className="highlight">breach</span>
+              Most breaches start with an exposure you never{" "}
+              <span className="highlight">knew you had</span>
             </h1>
             <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
               Aegis monitors the dark web, stealer-log markets, Telegram, and
-              millions of connected threat indicators to detect the risks that
+              millions of connected threat indicators to surface the risks that
               matter — and drive action across your existing security stack.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
