@@ -4,24 +4,24 @@ import { DemoMock } from "@/components/demo-mock"
 
 const steps = [
   {
-    lead: "Describe a ",
-    strong: "Llama 3.1 70B",
-    trail: " workload in plain English.",
+    lead: "Enter your ",
+    strong: "domain",
+    trail: " — or connect your SSO to scope the org.",
   },
   {
-    lead: "Aegis compares ",
-    strong: "SGLang",
-    trail: " and every other engine your model can run on.",
+    lead: "Aegis maps your ",
+    strong: "external attack surface",
+    trail: " across every subdomain, IP, and cert.",
   },
   {
-    lead: "It tunes ",
-    strong: "server tuning",
-    trail: " where it helps, with no config to hand-write.",
+    lead: "It correlates ",
+    strong: "open, deep, and dark web",
+    trail: " intel into one exposure view.",
   },
   {
-    lead: "Deploy on ",
-    strong: "NVIDIA A100",
-    trail: " and pay per million tokens, or export the stack and self-host.",
+    lead: "You get a ",
+    strong: "ranked fix list",
+    trail: " — or push it straight to Jira and Slack.",
   },
 ]
 
@@ -32,15 +32,14 @@ function AgentMock() {
         <Logo />
         <PanelLeft className="size-4 text-muted-foreground" />
         <span className="flex items-center gap-1 text-sm font-medium">
-          New Session <ChevronDown className="size-3.5 text-muted-foreground" />
+          New Scan <ChevronDown className="size-3.5 text-muted-foreground" />
         </span>
       </div>
 
       <div className="nl-reveal mt-4 rounded-lg bg-muted/60 p-3 text-sm leading-relaxed" style={{ "--d": "80ms" } as React.CSSProperties}>
         <span className="nl-stream inline-block" style={{ "--d": "220ms" } as React.CSSProperties}>
-          Optimize <span className="font-medium">Llama-3.1-8B-Instruct</span> on{" "}
-          <span className="font-medium">vLLM</span> for cheapest GPU with latency
-          and VRAM checks
+          Scan <span className="font-medium">acme.com</span> for external
+          exposure and <span className="font-medium">dark web</span> mentions
         </span>
       </div>
 
@@ -48,29 +47,29 @@ function AgentMock() {
         <ChevronRight className="size-3" /> Thought for 1s
       </button>
       <p className="nl-reveal mt-2 text-sm text-muted-foreground" style={{ "--d": "420ms" } as React.CSSProperties}>
-        Capturing cost-first intent for Llama 3.1 8B on vLLM.
+        Mapping attack surface and correlating threat intel for acme.com.
       </p>
 
       <div className="nl-reveal mt-4 rounded-lg border border-border p-3" style={{ "--d": "520ms" } as React.CSSProperties}>
         <div className="flex items-center gap-2 text-sm font-medium">
           <ClipboardList className="size-4 text-muted-foreground" />
-          Intake updated
+          Scan scope set
           <span className="ml-auto text-xs text-muted-foreground">
-            Model, engine, goal
+            Domain, surface, web
           </span>
         </div>
         <dl className="mt-3 space-y-1.5 text-sm">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Model</dt>
-            <dd className="font-medium">Llama 3.1 8B</dd>
+            <dt className="text-muted-foreground">Domain</dt>
+            <dd className="font-medium">acme.com</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Engine</dt>
-            <dd className="font-medium">vLLM</dd>
+            <dt className="text-muted-foreground">Surface</dt>
+            <dd className="font-medium">412 assets</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Goal</dt>
-            <dd className="font-medium">Low cost, latency checked</dd>
+            <dt className="text-muted-foreground">Sources</dt>
+            <dd className="font-medium">Clear, deep, dark</dd>
           </div>
         </dl>
       </div>
@@ -78,31 +77,33 @@ function AgentMock() {
       <div className="nl-reveal mt-3 rounded-lg border border-border p-3" style={{ "--d": "640ms" } as React.CSSProperties}>
         <div className="flex items-center gap-2 text-sm font-medium">
           <ListChecks className="size-4 text-muted-foreground" />
-          Plan drafted
+          Findings compiled
           <span className="ml-auto text-xs text-muted-foreground">3.1s</span>
         </div>
         <p className="mt-2 text-sm text-muted-foreground">
-          10 execution phases prepared
+          14 exposures prepared and ranked
         </p>
       </div>
 
       <div className="nl-pop mt-3 rounded-lg border border-lime/60 bg-lime/10 p-3" style={{ "--d": "780ms" } as React.CSSProperties}>
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           <span aria-hidden="true" className="nl-pulse size-1.5 rounded-full bg-lime" />
-          Plan ready · 10 phases · ~23m
+          Scan complete · 14 findings · 3 critical
         </p>
         <p className="mt-2 text-sm">
-          Optimize Llama 3.1 8B on vLLM for cheapest GPU with latency checks
+          Exposed credentials on a stealer log and an open S3 bucket ranked
+          highest
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Recommended path: vLLM on L4. Review the plan before execution.
+          Recommended path: reset exposed accounts, lock the bucket. Review the
+          plan before acting.
         </p>
         <div className="mt-3 flex gap-2">
           <button className="rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted">
-            Open Plan
+            Open Report
           </button>
           <button className="rounded-md bg-lime px-3 py-1.5 text-sm font-semibold text-lime-foreground transition-opacity hover:opacity-90">
-            Accept and run
+            Push to Jira
           </button>
         </div>
       </div>
@@ -115,12 +116,11 @@ export function HowItWorks() {
     <section className="border-b border-border">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:py-24">
         <h2 className="mx-auto max-w-3xl text-balance text-center text-4xl font-bold tracking-tight sm:text-5xl">
-          From prompt to a production stack you{" "}
-          <span className="highlight">own</span>
+          From domain to a <span className="highlight">prioritized</span> plan
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-pretty text-center text-lg leading-relaxed text-muted-foreground">
-          Aegis compares, tunes, and benchmarks the stack. Deploy or export
-          it.
+          Aegis detects, correlates, and ranks your exposure — then tells you
+          exactly what to fix first.
         </p>
 
         <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:items-center">

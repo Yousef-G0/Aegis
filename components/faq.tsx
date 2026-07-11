@@ -5,31 +5,31 @@ import { useState } from "react"
 const faqs = [
   {
     q: "What is Aegis?",
-    a: "Describe what you want to run. Aegis picks compatible open models, benchmarks GPUs, tunes the runtime, and gives you a deploy-ready stack.",
+    a: "Aegis is a cyber threat intelligence and exposure management platform. Enter your domain and Aegis maps your external attack surface, then scans the open, deep, and dark web for exposure tied to your organization.",
   },
   {
-    q: "How do I build my first pipeline?",
-    a: "Paste a model or describe your workload in plain English. Aegis drafts a plan across engines and GPUs, then runs it once you accept.",
+    q: "How does a scan work?",
+    a: "Aegis enumerates your domains, subdomains, IPs, and certificates, then correlates them against leaked credentials, source code, secrets, and dark web chatter — scoring each finding by real risk.",
   },
   {
-    q: "Which AI models are supported?",
-    a: "Any open model on Hugging Face across LLMs, speech, embeddings, rankers, vision, and audio — from Llama and Qwen to Whisper and DeepSeek.",
+    q: "What does Aegis monitor?",
+    a: "Exposed credentials, leaked source repos, stale subdomains, open cloud buckets, phishing and brand-abuse domains, and mentions across dark web forums, markets, and Telegram.",
   },
   {
-    q: "How does GPU kernel optimization work?",
-    a: "Where supported, Aegis tunes kernels and server settings for your model and target GPU, measuring the impact instead of assuming it.",
+    q: "Is monitoring the dark web legal and safe?",
+    a: "Yes. Aegis collects intelligence from publicly accessible underground sources using compliant, read-only methods. We never interact with or post to those sources.",
   },
   {
-    q: "Can I deploy pipelines as APIs?",
-    a: "Yes. Deploy the winning stack on our cloud and pay per million tokens, or export the deployment kit and self-host it anywhere.",
+    q: "How fast will I see results?",
+    a: "Most organizations get their first prioritized exposure report in minutes. Continuous monitoring then keeps the view current around the clock.",
   },
   {
-    q: "How is this different from using closed-source APIs?",
-    a: "You own the stack. No black box — you get the measured benchmark receipt and a runnable kit you can inspect, run, or move to your own cloud.",
+    q: "Does it integrate with my stack?",
+    a: "Yes. Push findings to Slack, Jira, Splunk, and your SIEM or SOAR, or pull them via API — so remediation happens inside workflows you already run.",
   },
   {
     q: "Is my data secure?",
-    a: "Workloads run on isolated GPU infrastructure with end-to-end encryption and zero data retention. Aegis is SOC 2 Type II attested.",
+    a: "Scans run on isolated infrastructure with end-to-end encryption and zero data retention on your assets. Aegis is SOC 2 Type II attested.",
   },
 ]
 

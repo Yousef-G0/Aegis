@@ -13,9 +13,9 @@ const pixel = Press_Start_2P({
 })
 
 export const metadata: Metadata = {
-  title: 'Optimize open models for production — Aegis',
+  title: 'Aegis — Cyber Threat Intelligence & Exposure Management',
   description:
-    'Paste a model. Aegis benchmarks the options and picks the winner. Deploy it, or own the stack.',
+    'Aegis scans your external attack surface and the open, deep, and dark web for exposure tied to your organization — then tells you exactly what to fix first.',
   generator: 'v0.app',
   icons: {
     icon: [

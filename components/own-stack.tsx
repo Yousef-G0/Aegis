@@ -1,46 +1,47 @@
-import { ShieldCheck, SlidersHorizontal, LineChart, Repeat } from "lucide-react"
+import { Radar, Timer, ShieldHalf, FileCheck2 } from "lucide-react"
 import { DemoMock } from "@/components/demo-mock"
 
 const reasons = [
   {
-    icon: ShieldCheck,
-    title: "Data privacy and control",
-    body: "Keep sensitive workloads on infrastructure you choose.",
+    icon: Radar,
+    title: "See it before they do",
+    body: "Know what attackers can see across your external surface and the dark web.",
   },
   {
-    icon: SlidersHorizontal,
-    title: "Customization",
-    body: "Tune the model, runtime, and GPU to your workload.",
+    icon: Timer,
+    title: "Shrink dwell time",
+    body: "Catch leaked credentials and secrets in hours, not the months attackers rely on.",
   },
   {
-    icon: LineChart,
-    title: "Performance ownership",
-    body: "Real tuning, measured, not assumed.",
+    icon: ShieldHalf,
+    title: "Protect the brand",
+    body: "Detect impersonating domains and takedown phishing kits abusing your name.",
   },
   {
-    icon: Repeat,
-    title: "Portability",
-    body: "Run it on our cloud, or export it to yours.",
+    icon: FileCheck2,
+    title: "Prove compliance",
+    body: "SOC 2-ready evidence and audit trails for every exposure you remediated.",
   },
 ]
 
 const supported = [
   {
-    label: "MODELS",
+    label: "SURFACE",
     items:
-      "Llama 3.3, Whisper, Qwen-Image, NV-Embed, Parler-TTS, Qwen2.5, Cosmos, Pixtral, DeepSeek-V3, Mistral, Gemma 2, Nemotron, BERT, Qwen3 Embedding",
+      "Domains, subdomains, IPs, certificates, cloud assets, exposed services",
   },
   {
-    label: "ENGINES",
-    items: "vLLM, SGLang, TensorRT-LLM, vLLM Omni, TEI, Transformers",
+    label: "SOURCES",
+    items: "Clear web, deep web, dark web, code repos, cloud buckets, Telegram",
   },
   {
-    label: "GPUS",
-    items: "L4, A10, L40S, RTX 4090, A100, H100, H200, B200",
+    label: "FINDINGS",
+    items:
+      "Credentials, PII, source code, secrets, phishing, brand abuse, ransomware",
   },
   {
-    label: "CLOUDS",
-    items: "Aegis Cloud, Modal, RunPod",
+    label: "INTEGRATIONS",
+    items: "Slack, Jira, Splunk, SIEM, SOAR, Entra ID, Okta, API",
   },
 ]
 
@@ -49,14 +50,15 @@ export function OwnStack() {
     <section className="border-b border-border">
       <div className="mx-auto max-w-6xl px-4 py-20 sm:py-24">
         <h2 className="mx-auto max-w-3xl text-balance text-center text-4xl font-bold tracking-tight sm:text-5xl">
-          Own the winning stack before you ship
+          Own your exposure posture, not just alerts
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-pretty text-center text-lg leading-relaxed text-muted-foreground">
-          Not a black box. You get the measured stack to run, deploy, or export.
+          Not a flood of noise. Aegis ranks what matters and feeds it into the
+          workflows you already run.
         </p>
 
         <h3 className="mt-16 text-center text-xl font-semibold">
-          Why owning your AI stack matters
+          Why continuous exposure monitoring matters
         </h3>
         <DemoMock className="mt-8 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
           {reasons.map(({ icon: Icon, title, body }, i) => (
@@ -78,10 +80,10 @@ export function OwnStack() {
         </DemoMock>
 
         <div className="mt-8 rounded-xl border border-border bg-card p-6 sm:p-8">
-          <p className="text-lg font-semibold">Supported across the stack</p>
+          <p className="text-lg font-semibold">Coverage across the stack</p>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            Open models, serving engines, GPUs, and the clouds you deploy to.
-            Aegis supports every layer of the inference stack.
+            From your external attack surface to the darkest corners of the
+            web — Aegis monitors every layer of exposure.
           </p>
           <dl className="mt-6 space-y-4">
             {supported.map((s) => (
