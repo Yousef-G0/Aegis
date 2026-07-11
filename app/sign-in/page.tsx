@@ -45,14 +45,17 @@ function GitHubIcon() {
 function SocialButton({
   icon,
   label,
+  onClick,
 }: {
   icon: ReactNode
   label: string
+  onClick?: () => void
 }) {
   return (
     <button
       type="button"
-      className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-foreground bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+      onClick={onClick}
+      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-foreground bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
     >
       {icon}
       {label}
@@ -90,7 +93,7 @@ export default function SignInPage() {
     try {
       const token = await login(email, password)
       setToken(token.access_token)
-      router.push("/")
+      router.push("/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid credentials.")
     } finally {
@@ -115,8 +118,20 @@ export default function SignInPage() {
       }
     >
       <div className="space-y-3">
-        <SocialButton icon={<GoogleIcon />} label="Continue with Google" />
-        <SocialButton icon={<GitHubIcon />} label="Continue with GitHub" />
+        <SocialButton
+          icon={<GoogleIcon />}
+          label="Continue with Google"
+          onClick={() => {
+            window.location.href = "/auth/login/google"
+          }}
+        />
+        <SocialButton
+          icon={<GitHubIcon />}
+          label="Continue with GitHub"
+          onClick={() => {
+            window.location.href = "/auth/login/github"
+          }}
+        />
       </div>
 
       <Divider />

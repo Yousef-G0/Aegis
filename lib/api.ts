@@ -80,6 +80,88 @@ export async function getMe(token: string): Promise<UserOut> {
   return res.json()
 }
 
+export type ExposureScore = {
+  total_events: number
+  critical_count: number
+  high_count: number
+  medium_count: number
+  low_count: number
+  info_count: number
+  exposure_score: number
+  new_events_last_30_days: number
+}
+
+export type EventItem = {
+  id: string
+  tenant_id: string
+  identifier_id: string | null
+  source: string
+  source_type: string
+  severity: string
+  status: string
+  title: string | null
+  preview: string | null
+  source_url: string | null
+  first_seen_at: string
+  last_seen_at: string
+}
+
+export type EventQuery = {
+  severity?: string
+  status?: string
+  source?: string
+  source_type?: string
+  limit?: number
+  offset?: number
+}
+
+export async function getExposure(token: string): Promise<ExposureScore> {
+  const res = await fetch(`${BASE}/api/v1/dashboard/exposure`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export async function getEvents(
+  token: string,
+  query: EventQuery = {},
+): Promise<EventItem[]> {
+  const params = new URLSearchParams()
+  if (query.severity) params.set("severity", query.severity)
+  if (query.status) params.set("status", query.status)
+  if (query.source) params.set("source", query.source)
+  if (query.source_type) params.set("source_type", query.source_type)
+  if (query.limit != null) params.set("limit", String(query.limit))
+  if (query.offset != null) params.set("offset", String(query.offset))
+  const qs = params.toString()
+  const res = await fetch(
+    `${BASE}/api/v1/events/${qs ? `?${qs}` : ""}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  )
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export type OAuthPayload = {
+  email: string
+  name?: string
+  provider_token: string
+}
+
+export async function oauthLogin(
+  provider: string,
+  payload: OAuthPayload,
+): Promise<Token> {
+  const res = await fetch(`${BASE}/api/v1/auth/oauth/${provider}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
 export function setToken(token: string) {
   if (typeof window !== "undefined") localStorage.setItem("aegis_token", token)
 }
