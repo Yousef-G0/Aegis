@@ -16,7 +16,6 @@ export const metadata: Metadata = {
   title: 'Aegis — Cyber Threat Intelligence & Exposure Management',
   description:
     'Aegis scans your external attack surface and the open, deep, and dark web for exposure tied to your organization — then tells you exactly what to fix first.',
-  generator: 'v0.app',
   icons: {
     icon: [
       {
