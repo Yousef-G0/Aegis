@@ -46,12 +46,13 @@ import {
 import { cn } from "@/lib/utils"
 
 const severityStyles: Record<string, string> = {
-  critical: "border-destructive/50 bg-destructive/10 text-destructive",
-  high: "border-orange-500/40 bg-orange-500/10 text-orange-600 dark:text-orange-400",
+  critical:
+    "rounded-md border-destructive/40 bg-destructive/10 text-destructive",
+  high: "rounded-md border-orange-500/40 bg-orange-500/10 text-orange-600 dark:text-orange-400",
   medium:
-    "border-yellow-500/40 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-  low: "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  info: "border-border bg-muted text-muted-foreground",
+    "rounded-md border-yellow-500/40 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
+  low: "rounded-md border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  info: "rounded-md border-border bg-muted text-muted-foreground",
 }
 
 const statusStyles: Record<string, string> = {
@@ -83,7 +84,7 @@ function formatDate(iso: string): string {
 function EventDetail({ event }: { event: EventItem }) {
   return (
     <div className="flex flex-1 flex-col">
-      <SheetHeader>
+      <SheetHeader className="pr-8">
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
@@ -298,9 +299,11 @@ export default function Page() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {stats.map((s) => (
               <Card key={s.label}>
-                <CardContent className="flex items-center justify-between p-4">
-                  <div>
-                    <p className="text-xs text-muted-foreground">{s.label}</p>
+                <CardContent className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs text-muted-foreground">
+                      {s.label}
+                    </p>
                     <p
                       className={cn(
                         "mt-1 text-2xl font-bold",
@@ -312,7 +315,17 @@ export default function Page() {
                       {s.value}
                     </p>
                   </div>
-                  <s.icon className="size-4 text-muted-foreground" />
+                  <span
+                    className={cn(
+                      "flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground",
+                      s.tone === "critical" &&
+                        "bg-destructive/10 text-destructive",
+                      s.tone === "high" &&
+                        "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+                    )}
+                  >
+                    <s.icon className="size-4" />
+                  </span>
                 </CardContent>
               </Card>
             ))}
@@ -342,7 +355,7 @@ export default function Page() {
                     onClick={() => setSelected(e)}
                     className="block w-full text-left"
                   >
-                    <Card className="transition-colors hover:border-foreground/40 hover:bg-muted/50">
+                    <Card className="transition-all hover:ring-foreground/20">
                       <CardContent className="flex items-start justify-between gap-3 p-4">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
@@ -390,12 +403,12 @@ export default function Page() {
           if (!open) setSelected(null)
         }}
       >
-        <SheetContent
-          side="right"
-          className="w-full gap-0 overflow-y-auto sm:max-w-xl"
-        >
-          {selected && <EventDetail event={selected} />}
-        </SheetContent>
+      <SheetContent
+        side="right"
+        className="w-full overflow-y-auto p-4 sm:max-w-xl"
+      >
+        {selected && <EventDetail event={selected} />}
+      </SheetContent>
       </Sheet>
     </SidebarProvider>
   )
