@@ -1,10 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { ReactNode } from "react"
 import { ChevronDown } from "lucide-react"
 import { AuthShell } from "@/components/auth-shell"
 import { cn } from "@/lib/utils"
+import { login, setToken } from "@/lib/api"
 
 const inputClass =
   "w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus-visible:border-foreground"
@@ -71,7 +73,30 @@ function Divider() {
 }
 
 export default function SignInPage() {
+  const router = useRouter()
   const [isEmailExpanded, setIsEmailExpanded] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  async function handleSubmit() {
+    setError("")
+    if (!email || !password) {
+      setError("Email and password are required.")
+      return
+    }
+    setLoading(true)
+    try {
+      const token = await login(email, password)
+      setToken(token.access_token)
+      router.push("/")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid credentials.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <AuthShell
@@ -132,6 +157,8 @@ export default function SignInPage() {
                 id="email"
                 type="email"
                 placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -146,6 +173,8 @@ export default function SignInPage() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -157,11 +186,20 @@ export default function SignInPage() {
                 Forgot password?
               </a>
             </div>
+
+            {error && (
+              <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {error}
+              </p>
+            )}
+
             <button
               type="button"
-              className="pixel-btn pixel-btn-primary w-full justify-center text-xs"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="pixel-btn pixel-btn-primary w-full justify-center text-xs disabled:opacity-70"
             >
-              Sign in
+              {loading ? "Signing in…" : "Sign in"}
             </button>
           </div>
         </div>

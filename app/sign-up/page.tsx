@@ -1,13 +1,24 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { ReactNode } from "react"
 import { ChevronDown } from "lucide-react"
 import { AuthShell } from "@/components/auth-shell"
 import { cn } from "@/lib/utils"
+import { registerTenant, registerUser, login, setToken } from "@/lib/api"
 
 const inputClass =
   "w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus-visible:border-foreground"
+
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40)
+}
 
 function GoogleIcon() {
   return (
@@ -71,7 +82,53 @@ function Divider() {
 }
 
 export default function SignUpPage() {
+  const router = useRouter()
   const [isEmailExpanded, setIsEmailExpanded] = useState(false)
+  const [orgName, setOrgName] = useState("")
+  const [slug, setSlug] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirm, setConfirm] = useState("")
+  const [terms, setTerms] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  function onOrgChange(v: string) {
+    setOrgName(v)
+    setSlug(slugify(v))
+  }
+
+  async function handleSubmit() {
+    setError("")
+    if (!orgName || !slug) {
+      setError("Organization name and workspace URL are required.")
+      return
+    }
+    if (!email || !password) {
+      setError("Email and password are required.")
+      return
+    }
+    if (password !== confirm) {
+      setError("Passwords do not match.")
+      return
+    }
+    if (!terms) {
+      setError("Please accept the Terms of Service.")
+      return
+    }
+    setLoading(true)
+    try {
+      await registerTenant(orgName, slug)
+      await registerUser(slug, email, password)
+      const token = await login(email, password)
+      setToken(token.access_token)
+      router.push("/")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <AuthShell
@@ -137,15 +194,35 @@ export default function SignUpPage() {
             )}
           >
             <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm font-medium">
-                Name
+              <label htmlFor="org" className="mb-1.5 block text-sm font-medium">
+                Organization name
               </label>
               <input
-                id="name"
+                id="org"
                 type="text"
-                placeholder="Jane Doe"
+                placeholder="Acme Security"
+                value={orgName}
+                onChange={(e) => onOrgChange(e.target.value)}
                 className={inputClass}
               />
+            </div>
+            <div>
+              <label htmlFor="slug" className="mb-1.5 block text-sm font-medium">
+                Workspace URL
+              </label>
+              <div className="flex items-center rounded-md border border-border bg-background focus-within:border-foreground">
+                <span className="px-3 text-sm text-muted-foreground">
+                  aegis.app/
+                </span>
+                <input
+                  id="slug"
+                  type="text"
+                  placeholder="acme"
+                  value={slug}
+                  onChange={(e) => setSlug(slugify(e.target.value))}
+                  className="w-full rounded-r-md bg-transparent py-2.5 pr-3 text-sm outline-none"
+                />
+              </div>
             </div>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
@@ -155,17 +232,24 @@ export default function SignUpPage() {
                 id="email"
                 type="email"
                 placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className={inputClass}
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
+              <label
+                htmlFor="password"
+                className="mb-1.5 block text-sm font-medium"
+              >
                 Password
               </label>
               <input
                 id="password"
                 type="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className={inputClass}
               />
             </div>
@@ -180,11 +264,18 @@ export default function SignUpPage() {
                 id="confirm-password"
                 type="password"
                 placeholder="••••••••"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
                 className={inputClass}
               />
             </div>
             <label className="flex items-start gap-2 text-sm text-muted-foreground">
-              <input type="checkbox" className="mt-0.5 size-4 accent-[var(--foreground)]" />
+              <input
+                type="checkbox"
+                checked={terms}
+                onChange={(e) => setTerms(e.target.checked)}
+                className="mt-0.5 size-4 accent-[var(--foreground)]"
+              />
               I agree to the{" "}
               <a href="#" className="font-medium text-foreground underline underline-offset-4">
                 Terms of Service
@@ -195,11 +286,20 @@ export default function SignUpPage() {
               </a>
               .
             </label>
+
+            {error && (
+              <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {error}
+              </p>
+            )}
+
             <button
               type="button"
-              className="pixel-btn pixel-btn-primary w-full justify-center text-xs"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="pixel-btn pixel-btn-primary w-full justify-center text-xs disabled:opacity-70"
             >
-              Create Account
+              {loading ? "Creating account…" : "Create Account"}
             </button>
           </div>
         </div>
