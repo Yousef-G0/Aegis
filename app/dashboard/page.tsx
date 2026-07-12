@@ -265,7 +265,14 @@ export default function Page() {
     : []
 
   return (
-    <SidebarProvider>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
       <AppSidebar
         user={
           user ? { name: user.email, email: user.email } : undefined

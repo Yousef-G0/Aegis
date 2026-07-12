@@ -32,6 +32,7 @@ const mainNav = [
     url: "/dashboard",
     icon: <LayoutDashboardIcon />,
     isActive: true,
+    items: [{ title: "Identifiers", url: "/identifiers" }],
   },
   {
     title: "Actions",
@@ -45,7 +46,7 @@ const mainNav = [
   },
   {
     title: "Identifiers",
-    url: "#",
+    url: "/identifiers",
     icon: <FingerprintIcon />,
   },
 ]

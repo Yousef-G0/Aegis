@@ -175,3 +175,62 @@ export function getToken(): string | null {
 export function clearToken() {
   if (typeof window !== "undefined") localStorage.removeItem("aegis_token")
 }
+
+export type IdentifierType =
+  | "domain"
+  | "keyword"
+  | "email"
+  | "ip"
+  | "username"
+
+export type Identifier = {
+  id: string
+  value: string
+  name?: string
+  type: IdentifierType
+  enabled: boolean
+  severity_filter?: string
+  created_at: string
+}
+
+export type CreateIdentifierBody = {
+  type: string
+  value: string
+  enabled: boolean
+  severity_filter: string
+}
+
+export async function getIdentifiers(token: string): Promise<Identifier[]> {
+  const res = await fetch(`${BASE}/api/v1/identifiers/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export async function createIdentifier(
+  token: string,
+  body: CreateIdentifierBody,
+): Promise<Identifier> {
+  const res = await fetch(`${BASE}/api/v1/identifiers/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export async function deleteIdentifier(
+  token: string,
+  id: string,
+): Promise<void> {
+  const res = await fetch(`${BASE}/api/v1/identifiers/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw await apiError(res)
+}
