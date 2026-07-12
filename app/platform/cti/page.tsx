@@ -459,7 +459,7 @@ export default function CtiPlatformPage() {
       {/* CTA */}
       <Section>
         <div className="rounded-2xl border-2 border-foreground bg-lime/10 p-8 text-center shadow-[6px_6px_0_0_var(--foreground)] sm:p-12">
-          <ShieldHalf className="mx-auto size-9 text-lime" strokeWidth={2.2} />
+          {/* <ShieldHalf className="mx-auto size-9 text-lime" strokeWidth={2.2} /> */}
           <h2 className="mx-auto mt-6 max-w-2xl text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             Stand up Aegis in 30 minutes
           </h2>

@@ -102,7 +102,7 @@ export function AppSidebar({
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
           <span className="flex size-7 items-center justify-center rounded-md bg-primary/10 text-primary">
-            <ShieldHalf className="size-4" />
+           {/* <ShieldHalf className="size-4" /> */}
           </span>
           <span className="text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
             Aegis

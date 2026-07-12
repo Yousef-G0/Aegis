@@ -191,7 +191,7 @@ export function CtaFooter() {
         <div className="mx-auto max-w-6xl px-4 py-20 sm:py-24">
           <div className="grid gap-8 rounded-2xl border border-border bg-card p-8 sm:p-12 lg:grid-cols-2 lg:items-center">
             <div>
-              <ShieldHalf className="size-8 text-lime" strokeWidth={2.2} />
+              {/* <ShieldHalf className="size-8 text-lime" strokeWidth={2.2} /> */}
               <h2 className="mt-6 text-balance text-3xl font-bold tracking-tight sm:text-4xl">
                 Run your first scan before someone else does
               </h2>
@@ -238,7 +238,7 @@ export function CtaFooter() {
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-16">
           <div className="flex min-w-0 flex-col gap-4">
             <div className="flex items-center gap-2">
-              <ShieldHalf className="size-5 text-lime" strokeWidth={2.2} />
+              {/* <ShieldHalf className="size-5 text-lime" strokeWidth={2.2} /> */}
               <span className="text-lg font-semibold">Aegis</span>
             </div>
 
