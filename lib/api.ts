@@ -107,6 +107,7 @@ export type EventItem = {
 }
 
 export type EventQuery = {
+  identifier_id?: string
   severity?: string
   status?: string
   source?: string
@@ -128,6 +129,7 @@ export async function getEvents(
   query: EventQuery = {},
 ): Promise<EventItem[]> {
   const params = new URLSearchParams()
+  if (query.identifier_id) params.set("identifier_id", query.identifier_id)
   if (query.severity) params.set("severity", query.severity)
   if (query.status) params.set("status", query.status)
   if (query.source) params.set("source", query.source)

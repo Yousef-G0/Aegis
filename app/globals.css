@@ -345,3 +345,22 @@
     animation: none;
   }
 }
+
+/* ---- Aegis scanning loader (animated pixels inside the "A" logo) ---- */
+@keyframes aegis-pixel {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+@keyframes aegis-scan {
+  0% {
+    transform: translateY(-30px);
+  }
+  100% {
+    transform: translateY(190px);
+  }
+}

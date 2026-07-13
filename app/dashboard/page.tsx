@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState, useCallback, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,9 +16,10 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { AegisLoader } from "@/components/aegis-loader"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
@@ -32,9 +34,11 @@ import {
   getMe,
   getExposure,
   getEvents,
+  getIdentifiers,
   type UserOut,
   type ExposureScore,
   type EventItem,
+  type Identifier,
 } from "@/lib/api"
 import {
   AlertTriangle,
@@ -42,6 +46,8 @@ import {
   ShieldHalf,
   ExternalLink,
   ScrollTextIcon,
+  X,
+  RefreshCw,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -193,31 +199,63 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center">
+          <AegisLoader label="Loading dashboard…" />
+        </main>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
+  )
+}
+
+function DashboardContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const identifierId = searchParams.get("identifier")
   const [user, setUser] = useState<UserOut | null>(null)
   const [exposure, setExposure] = useState<ExposureScore | null>(null)
   const [events, setEvents] = useState<EventItem[]>([])
+  const [identifiers, setIdentifiers] = useState<Identifier[]>([])
+  const [activeIdentifier, setActiveIdentifier] = useState<Identifier | null>(
+    null,
+  )
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState("")
   const [selected, setSelected] = useState<EventItem | null>(null)
 
-  useEffect(() => {
-    const token = getToken()
-    if (!token) {
-      router.replace("/sign-in")
-      return
-    }
-    Promise.all([
-      getMe(token),
-      getExposure(token),
-      getEvents(token, { limit: 100 }),
-    ])
-      .then(([u, exp, ev]) => {
+  const loadData = useCallback(
+    async (opts: { initial?: boolean } = {}) => {
+      const token = getToken()
+      if (!token) {
+        router.replace("/sign-in")
+        return
+      }
+      if (opts.initial) setLoading(true)
+      else setRefreshing(true)
+      try {
+        const [u, exp, ev, idents] = await Promise.all([
+          getMe(token),
+          getExposure(token),
+          getEvents(token, {
+            limit: 100,
+            ...(identifierId ? { identifier_id: identifierId } : {}),
+          }),
+          getIdentifiers(token),
+        ])
         setUser(u)
         setExposure(exp)
         setEvents(ev)
-      })
-      .catch((err) => {
+        setIdentifiers(idents)
+        setActiveIdentifier(
+          identifierId ? idents.find((i) => i.id === identifierId) ?? null : null,
+        )
+        setError("")
+      } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load dashboard",
         )
@@ -225,14 +263,22 @@ export default function Page() {
           clearToken()
           router.replace("/sign-in")
         }
-      })
-      .finally(() => setLoading(false))
-  }, [router])
+      } finally {
+        setLoading(false)
+        setRefreshing(false)
+      }
+    },
+    [router, identifierId],
+  )
+
+  useEffect(() => {
+    loadData({ initial: true })
+  }, [loadData])
 
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center">
-        <p className="text-sm text-muted-foreground">Loading dashboard…</p>
+        <AegisLoader label="Loading dashboard…" />
       </main>
     )
   }
@@ -303,6 +349,29 @@ export default function Page() {
             </p>
           )}
 
+          {identifierId && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted/40 px-3 py-2">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground">
+                  Showing events for identifier:
+                </span>
+                <Badge variant="outline" className="rounded-md font-medium">
+                  {activeIdentifier?.value ?? identifierId}
+                </Badge>
+              </div>
+              <Link
+                href="/dashboard"
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "sm" }),
+                  "h-7 gap-1 text-muted-foreground",
+                )}
+              >
+                <X className="size-3.5" />
+                Clear filter
+              </Link>
+            </div>
+          )}
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {stats.map((s) => (
               <Card key={s.label}>
@@ -345,12 +414,64 @@ export default function Page() {
               <span className="text-sm text-muted-foreground">
                 ({events.length})
               </span>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-auto gap-1.5"
+                onClick={() => loadData()}
+                disabled={refreshing}
+              >
+                <RefreshCw
+                  className={cn("size-3.5", refreshing && "animate-spin")}
+                />
+                {refreshing ? "Refreshing…" : "Refresh"}
+              </Button>
             </div>
 
             {events.length === 0 ? (
               <Card>
-                <CardContent className="p-6 text-sm text-muted-foreground">
-                  No events yet.
+                <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
+                  {identifiers.length === 0 ? (
+                    <>
+                      <ScrollTextIcon className="size-8 text-muted-foreground" />
+                      <p className="max-w-sm text-sm text-muted-foreground">
+                        No identifiers yet. Add a domain, keyword, or email on
+                        the{" "}
+                        <Link
+                          href="/identifiers"
+                          className="font-medium text-primary hover:underline"
+                        >
+                          Identifiers
+                        </Link>{" "}
+                        page to start monitoring for exposures.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <AegisLoader label="Scanning for exposures…" />
+                      <p className="max-w-md text-sm text-muted-foreground">
+                        We&rsquo;re searching public sources (GitHub,
+                        certificate logs, and more) for your identifiers. This
+                        can take a few minutes — results will appear here as
+                        they&rsquo;re found.
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5"
+                        onClick={() => loadData()}
+                        disabled={refreshing}
+                      >
+                        <RefreshCw
+                          className={cn(
+                            "size-3.5",
+                            refreshing && "animate-spin",
+                          )}
+                        />
+                        Check again
+                      </Button>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             ) : (
