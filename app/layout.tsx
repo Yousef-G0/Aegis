@@ -1,7 +1,7 @@
-import { Analytics } from '@vercel/analytics/next'
+import { ThemeProvider } from '@/components/theme-provider'
+import { CookieConsent } from '@/components/cookie-consent'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Press_Start_2P } from 'next/font/google'
-import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
@@ -62,7 +62,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          {process.env.NODE_ENV === 'production' && <Analytics />}
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>
