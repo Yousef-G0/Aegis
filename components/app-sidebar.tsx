@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
+import { Logo } from "@/components/logo"
 import {
   Sidebar,
   SidebarContent,
@@ -102,8 +103,8 @@ export function AppSidebar({
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
-          <span className="flex size-7 items-center justify-center rounded-md bg-primary/10 text-primary">
-           {/* <ShieldHalf className="size-4" /> */}
+          <span className="flex size-7 items-center justify-center overflow-hidden rounded-md bg-primary/10">
+            <Logo className="size-5" />
           </span>
           <span className="text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
             Aegis
