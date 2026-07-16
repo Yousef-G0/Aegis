@@ -65,6 +65,7 @@ import {
   Globe,
   SlidersHorizontal,
   KeyRound,
+  Send,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -128,6 +129,12 @@ const SOURCE_META: Record<string, SourceMeta> = {
     icon: KeyRound,
     className:
       "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  },
+  telegram: {
+    label: "Telegram",
+    icon: Send,
+    className:
+      "border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400",
   },
 }
 
