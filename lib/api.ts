@@ -102,6 +102,7 @@ export type EventItem = {
   title: string | null
   preview: string | null
   source_url: string | null
+  confidence: number
   first_seen_at: string
   last_seen_at: string
 }
@@ -112,6 +113,7 @@ export type EventQuery = {
   status?: string
   source?: string
   source_type?: string
+  min_confidence?: number
   limit?: number
   offset?: number
 }
@@ -134,6 +136,7 @@ export async function getEvents(
   if (query.status) params.set("status", query.status)
   if (query.source) params.set("source", query.source)
   if (query.source_type) params.set("source_type", query.source_type)
+  if (query.min_confidence != null) params.set("min_confidence", String(query.min_confidence))
   if (query.limit != null) params.set("limit", String(query.limit))
   if (query.offset != null) params.set("offset", String(query.offset))
   const qs = params.toString()

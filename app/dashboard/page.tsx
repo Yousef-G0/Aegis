@@ -64,6 +64,7 @@ import {
   ClipboardList,
   Globe,
   SlidersHorizontal,
+  KeyRound,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -121,6 +122,12 @@ const SOURCE_META: Record<string, SourceMeta> = {
     icon: BadgeCheck,
     className:
       "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  },
+  leaks: {
+    label: "Leak repos",
+    icon: KeyRound,
+    className:
+      "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400",
   },
 }
 
@@ -792,6 +799,21 @@ function DashboardContent() {
                               >
                                 {e.status}
                               </span>
+                              {typeof e.confidence === "number" && (
+                                <span
+                                  className={cn(
+                                    "rounded-md border px-1.5 py-0.5 text-[10px] font-medium tabular-nums",
+                                    e.confidence >= 0.7
+                                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                      : e.confidence >= 0.5
+                                        ? "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                                        : "border-border bg-muted text-muted-foreground",
+                                  )}
+                                  title="Match confidence — lower scores are more likely false positives"
+                                >
+                                  {Math.round(e.confidence * 100)}% match
+                                </span>
+                              )}
                             </div>
                             <p className="mt-1.5 truncate text-sm font-medium">
                               {e.title || e.preview || "(no title)"}
