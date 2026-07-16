@@ -61,6 +61,7 @@ import {
   type IdentifierType,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { AegisLoader } from "@/components/aegis-loader"
 import {
   Info,
   Plus,
@@ -72,7 +73,6 @@ import {
   Loader2,
   Fingerprint,
 } from "lucide-react"
-
 const TYPE_OPTIONS: { label: string; value: IdentifierType }[] = [
   { label: "Domain", value: "domain" },
   { label: "Keyword", value: "keyword" },
@@ -452,8 +452,8 @@ export default function IdentifiersPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center">
-        <Loader2 className="size-5 animate-spin text-muted-foreground" />
+      <main className="flex min-h-screen items-center justify-center bg-background">
+        <AegisLoader label="Loading identifiers…" size={88} />
       </main>
     )
   }

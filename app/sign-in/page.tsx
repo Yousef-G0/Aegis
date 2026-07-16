@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react"
 import { AuthShell } from "@/components/auth-shell"
 import { cn } from "@/lib/utils"
 import { login, setToken } from "@/lib/api"
+import { AegisLoader } from "@/components/aegis-loader"
 
 const inputClass =
   "w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus-visible:border-foreground"
@@ -46,19 +47,22 @@ function SocialButton({
   icon,
   label,
   onClick,
+  loading,
 }: {
   icon: ReactNode
   label: string
   onClick?: () => void
+  loading?: boolean
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-foreground bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+      disabled={loading}
+      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-2 border-foreground bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted disabled:cursor-wait disabled:opacity-70"
     >
-      {icon}
-      {label}
+      {loading ? <AegisLoader size={20} /> : icon}
+      {loading ? "Redirecting…" : label}
     </button>
   )
 }
@@ -81,6 +85,9 @@ export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(
+    null,
+  )
   const [error, setError] = useState("")
 
   async function handleSubmit() {
@@ -102,33 +109,38 @@ export default function SignInPage() {
   }
 
   return (
-    <AuthShell
-      title="Welcome back"
-      subtitle="Sign in to your Aegis workspace and pick up where you left off."
-      footer={
-        <>
-          Don&apos;t have an account?{" "}
-          <a
-            href="/sign-up"
-            className="font-medium text-foreground underline underline-offset-4"
-          >
-            Sign up
-          </a>
-        </>
-      }
-    >
+    <>
+      <AuthShell
+        title="Welcome back"
+        subtitle="Sign in to your Aegis workspace and pick up where you left off."
+        footer={
+          <>
+            Don&apos;t have an account?{" "}
+            <a
+              href="/sign-up"
+              className="font-medium text-foreground underline underline-offset-4"
+            >
+              Sign up
+            </a>
+          </>
+        }
+      >
       <div className="space-y-3">
         <SocialButton
           icon={<GoogleIcon />}
           label="Continue with Google"
+          loading={oauthLoading === "google"}
           onClick={() => {
+            setOauthLoading("google")
             window.location.href = "/auth/login/google"
           }}
         />
         <SocialButton
           icon={<GitHubIcon />}
           label="Continue with GitHub"
+          loading={oauthLoading === "github"}
           onClick={() => {
+            setOauthLoading("github")
             window.location.href = "/auth/login/github"
           }}
         />
@@ -212,13 +224,24 @@ export default function SignInPage() {
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="pixel-btn pixel-btn-primary w-full justify-center text-xs disabled:opacity-70"
+              className="pixel-btn pixel-btn-primary flex w-full items-center justify-center gap-2 text-xs disabled:cursor-wait disabled:opacity-70"
             >
+              {loading && <AegisLoader size={16} />}
               {loading ? "Signing in…" : "Sign in"}
             </button>
           </div>
         </div>
       </div>
     </AuthShell>
+      {oauthLoading && (
+        <AegisLoader
+          overlay
+          label={`Connecting to ${oauthLoading === "google" ? "Google" : "GitHub"}…`}
+          size={96}
+        />
+      )}
+    </>
   )
 }
+
+

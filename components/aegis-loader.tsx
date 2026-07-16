@@ -31,10 +31,14 @@ export function AegisLoader({
   size = 88,
   label,
   className,
+  centered = false,
+  overlay = false,
 }: {
   size?: number
   label?: string
   className?: string
+  centered?: boolean
+  overlay?: boolean
 }) {
   const pixels = []
   for (let row = 0; row < GRID; row++) {
@@ -61,7 +65,14 @@ export function AegisLoader({
 
   return (
     <div
-      className={cn("flex flex-col items-center gap-3", className)}
+      className={cn(
+        "flex flex-col items-center gap-3",
+        centered && "min-h-screen justify-center",
+        overlay &&
+          "fixed inset-0 z-50 justify-center bg-background/80 backdrop-blur-sm",
+        !centered && !overlay && "p-6",
+        className,
+      )}
       role="status"
       aria-live="polite"
     >

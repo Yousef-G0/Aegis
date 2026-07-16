@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { setToken } from "@/lib/api"
+import { AegisLoader } from "@/components/aegis-loader"
 
 export default function AuthDonePage() {
   const router = useRouter()
@@ -15,8 +16,8 @@ export default function AuthDonePage() {
   }, [router])
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-sm text-muted-foreground">Signing you in…</p>
+    <main className="flex min-h-screen items-center justify-center bg-background">
+      <AegisLoader label="Signing you in…" size={96} />
     </main>
   )
 }
