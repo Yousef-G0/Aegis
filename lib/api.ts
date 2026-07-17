@@ -167,6 +167,28 @@ export async function oauthLogin(
   return res.json()
 }
 
+export async function onboard(
+  orgName: string,
+  slug: string,
+  email: string,
+  password: string,
+  domain?: string,
+): Promise<Token> {
+  const res = await fetch(`${BASE}/api/v1/auth/onboard`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      org_name: orgName,
+      slug,
+      email,
+      password,
+      domain: domain ?? "",
+    }),
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
 export function setToken(token: string) {
   if (typeof window !== "undefined") localStorage.setItem("aegis_token", token)
 }

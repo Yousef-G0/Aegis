@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
 import { ChevronDown } from "lucide-react"
 import { AuthShell } from "@/components/auth-shell"
 import { cn } from "@/lib/utils"
-import { registerTenant, registerUser, login, setToken } from "@/lib/api"
+import { registerTenant, registerUser, login, setToken, onboard } from "@/lib/api"
 import { AegisLoader } from "@/components/aegis-loader"
 
 const inputClass =
@@ -102,6 +102,10 @@ export default function SignUpPage() {
     null,
   )
   const [error, setError] = useState("")
+  const pendingDomain =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("domain") ?? ""
+      : ""
 
   function onOrgChange(v: string) {
     setOrgName(v)
@@ -128,10 +132,15 @@ export default function SignUpPage() {
     }
     setLoading(true)
     try {
-      await registerTenant(orgName, slug)
-      await registerUser(slug, email, password)
-      const token = await login(email, password)
-      setToken(token.access_token)
+      if (pendingDomain) {
+        const token = await onboard(orgName, slug, email, password, pendingDomain)
+        setToken(token.access_token)
+      } else {
+        await registerTenant(orgName, slug)
+        await registerUser(slug, email, password)
+        const token = await login(email, password)
+        setToken(token.access_token)
+      }
       router.push("/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.")

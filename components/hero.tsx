@@ -126,6 +126,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ArrowRight, Globe, Loader2 } from "lucide-react"
 import { GridDecoration } from "@/components/grid-decoration"
 
@@ -137,6 +138,7 @@ const sampleFindings = [
 ]
 
 export function Hero() {
+  const router = useRouter()
   const [domain, setDomain] = useState("")
   const [scanning, setScanning] = useState(false)
 
@@ -144,7 +146,8 @@ export function Hero() {
     e.preventDefault()
     if (!domain.trim()) return
     setScanning(true)
-    window.setTimeout(() => setScanning(false), 1800)
+    const params = new URLSearchParams({ domain: domain.trim() })
+    router.push(`/sign-up?${params.toString()}`)
   }
 
   return (
