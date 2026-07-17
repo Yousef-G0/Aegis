@@ -18,22 +18,17 @@ import {
 import { AppSidebar } from "@/components/app-sidebar"
 import { AegisLoader } from "@/components/aegis-loader"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { SeverityDonut, SourceBar } from "@/components/exposure-charts"
-import { EventList } from "@/components/event-list"
 import {
   getToken,
   clearToken,
   getMe,
   getExposure,
   getEvents,
-  getIdentifiers,
   type UserOut,
   type ExposureScore,
   type EventItem,
-  type Identifier,
 } from "@/lib/api"
 import {
   AlertTriangle,
@@ -64,7 +59,6 @@ function DashboardContent() {
   const [user, setUser] = useState<UserOut | null>(null)
   const [exposure, setExposure] = useState<ExposureScore | null>(null)
   const [events, setEvents] = useState<EventItem[]>([])
-  const [identifiers, setIdentifiers] = useState<Identifier[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState("")
@@ -74,8 +68,6 @@ function DashboardContent() {
     for (const e of events) counts[e.source] = (counts[e.source] ?? 0) + 1
     return counts
   }, [events])
-
-  const recentEvents = useMemo(() => events.slice(0, 6), [events])
 
   const loadData = useCallback(
     async (opts: { initial?: boolean } = {}) => {
@@ -87,19 +79,17 @@ function DashboardContent() {
       if (opts.initial) setLoading(true)
       else setRefreshing(true)
       try {
-        const [u, exp, ev, idents] = await Promise.all([
+        const [u, exp, ev] = await Promise.all([
           getMe(token),
           getExposure(token),
           getEvents(token, {
             limit: 100,
             ...(identifierId ? { identifier_id: identifierId } : {}),
           }),
-          getIdentifiers(token),
         ])
         setUser(u)
         setExposure(exp)
         setEvents(ev)
-        setIdentifiers(idents)
         setError("")
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load dashboard")
@@ -231,26 +221,23 @@ function DashboardContent() {
             <SourceBar counts={sourceCounts} />
           </div>
 
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <h2 className="text-lg font-semibold">Recent events</h2>
-              <Link
-                href="/events"
-                className={cn(
-                  buttonVariants({ variant: "ghost", size: "sm" }),
-                  "ml-auto gap-1 text-muted-foreground",
-                )}
-              >
-                View all <ArrowRight className="size-3.5" />
-              </Link>
+          <Link
+            href="/events"
+            className="flex items-center justify-between rounded-xl border border-border bg-card/50 px-5 py-4 transition-colors hover:border-foreground/30"
+          >
+            <div className="flex items-center gap-3">
+              <span className="flex size-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+                <Activity className="size-4" />
+              </span>
+              <div>
+                <p className="text-sm font-medium">View all events</p>
+                <p className="text-xs text-muted-foreground">
+                  {exposure?.total_events ?? 0} detected across all your sources
+                </p>
+              </div>
             </div>
-            <EventList
-              events={recentEvents}
-              identifiers={identifiers}
-              onRefresh={() => loadData()}
-              refreshing={refreshing}
-            />
-          </div>
+            <ArrowRight className="size-4 text-muted-foreground" />
+          </Link>
         </div>
       </SidebarInset>
     </SidebarProvider>

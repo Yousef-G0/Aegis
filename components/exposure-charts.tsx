@@ -25,12 +25,14 @@ const SEVERITY_COLORS: Record<string, string> = {
 
 const SEVERITY_ORDER = ["critical", "high", "medium", "low", "info"] as const
 
-export function SeverityDonut({ exposure }: { exposure: ExposureScore }) {
-  const data = SEVERITY_ORDER.map((s) => ({
-    name: s[0].toUpperCase() + s.slice(1),
-    key: s,
-    value: exposure[`${s}_count` as keyof ExposureScore] as number,
-  })).filter((d) => d.value > 0)
+export function SeverityDonut({ exposure }: { exposure: ExposureScore | null }) {
+  const data = exposure
+    ? SEVERITY_ORDER.map((s) => ({
+        name: s[0].toUpperCase() + s.slice(1),
+        key: s,
+        value: exposure[`${s}_count` as keyof ExposureScore] as number,
+      })).filter((d) => d.value > 0)
+    : []
 
   const total = data.reduce((a, b) => a + b.value, 0)
 
