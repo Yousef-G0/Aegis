@@ -364,3 +364,17 @@
     transform: translateY(190px);
   }
 }
+
+/* ---- Collapsible accordion animation (sidebar sections like "Main") ---- */
+[data-slot="collapsible-content"] {
+  overflow: hidden;
+  display: grid;
+  transition: grid-template-rows 300ms ease;
+  grid-template-rows: 0fr;
+}
+[data-slot="collapsible-content"][data-open] {
+  grid-template-rows: 1fr;
+}
+[data-slot="collapsible-content"] > * {
+  min-height: 0;
+}

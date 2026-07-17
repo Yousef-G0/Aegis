@@ -29,26 +29,18 @@ import {
 
 const mainNav = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: "Main",
+    url: "#",
     icon: <LayoutDashboardIcon />,
     isActive: true,
-    items: [{ title: "Identifiers", url: "/identifiers" }],
-  },
-  {
-    title: "Actions",
-    url: "#",
-    icon: <ZapIcon />,
-  },
-  {
-    title: "Events",
-    url: "#",
-    icon: <ScrollTextIcon />,
-  },
-  {
-    title: "Identifiers",
-    url: "/identifiers",
-    icon: <FingerprintIcon />,
+    items: [
+      { title: "Dashboard", url: "/dashboard" },
+      { title: "Identifiers", url: "/identifiers" },
+      { title: "Events", url: "/events" },
+      { title: "Actions", url: "/actions" },
+      { title: "Reports", url: "/reports" },
+      { title: "Supply Chain", url: "/supply-chain" },
+    ],
   },
 ]
 
