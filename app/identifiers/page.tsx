@@ -61,7 +61,7 @@ import {
   type IdentifierType,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
-import { AegisLoader } from "@/components/aegis-loader"
+import { AppShellLoader } from "@/components/app-shell-loader"
 import { toast } from "sonner"
 import {
   Info,
@@ -457,11 +457,7 @@ export default function IdentifiersPage() {
   }
 
   if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-background">
-        <AegisLoader label="Loading identifiers…" size={88} />
-      </main>
-    )
+    return <AppShellLoader title="Identifiers" />
   }
 
   return (

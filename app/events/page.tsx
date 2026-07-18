@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { AegisLoader } from "@/components/aegis-loader"
+import { AppShellLoader } from "@/components/app-shell-loader"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { EventList } from "@/components/event-list"
 import {
@@ -90,11 +91,7 @@ function EventsContent() {
   }, [loadData])
 
   if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center">
-        <AegisLoader label="Loading events…" />
-      </main>
-    )
+    return <AppShellLoader title="Events" />
   }
 
   return (

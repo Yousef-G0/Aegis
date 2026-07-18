@@ -16,6 +16,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { AppShellLoader } from "@/components/app-shell-loader"
 import { AegisLoader } from "@/components/aegis-loader"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Card, CardContent } from "@/components/ui/card"
@@ -113,11 +114,7 @@ function DashboardContent() {
   }, [loadData])
 
   if (loading) {
-    return (
-      <main className="flex min-h-screen items-center justify-center">
-        <AegisLoader label="Loading dashboard…" />
-      </main>
-    )
+    return <AppShellLoader title="Dashboard" />
   }
 
 
