@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@/components/theme-provider'
 import { CookieConsent } from '@/components/cookie-consent'
+import { Toaster } from '@/components/ui/sonner'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono, Press_Start_2P } from 'next/font/google'
 import './globals.css'
@@ -63,6 +64,7 @@ export default function RootLayout({
         >
           {children}
           <CookieConsent />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -19,6 +19,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { AegisLoader } from "@/components/aegis-loader"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { SeverityDonut, SourceBar } from "@/components/exposure-charts"
 import {
   getToken,
@@ -56,6 +57,8 @@ function DashboardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const identifierId = searchParams.get("identifier")
+  const welcomeDomain = searchParams.get("domain") ?? ""
+  const showWelcome = searchParams.get("welcome") === "1" || !!welcomeDomain
   const [user, setUser] = useState<UserOut | null>(null)
   const [exposure, setExposure] = useState<ExposureScore | null>(null)
   const [events, setEvents] = useState<EventItem[]>([])
@@ -117,6 +120,7 @@ function DashboardContent() {
     )
   }
 
+
   const stats = exposure
     ? [
         {
@@ -177,11 +181,34 @@ function DashboardContent() {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pt-6 sm:p-8">
           {error && (
             <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
               {error}
             </p>
+          )}
+
+          {showWelcome && (
+            <Card className="rounded-2xl border-primary/30 bg-primary/5 shadow-sm">
+              <CardContent className="flex flex-col gap-3 p-6 sm:flex-row sm:items-center sm:gap-5">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Activity className="size-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold">
+                    Scanning started{welcomeDomain ? ` for ${welcomeDomain}` : ""}
+                  </p>
+                  <p className="mt-0.5 text-sm text-muted-foreground">
+                    We&rsquo;re sweeping the open, deep, and dark web for exposures.
+                    First results will appear here shortly.
+                  </p>
+                </div>
+                <Button variant="outline" nativeButton={false} render={<Link href="/identifiers" />}>
+                  View identifiers
+                  <ArrowRight className="size-4" />
+                </Button>
+              </CardContent>
+            </Card>
           )}
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -220,6 +247,27 @@ function DashboardContent() {
             <SeverityDonut exposure={exposure!} />
             <SourceBar counts={sourceCounts} />
           </div>
+
+          {exposure && exposure.total_events === 0 && !showWelcome && (
+            <Card className="rounded-2xl border-dashed border-border">
+              <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+                <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <ShieldHalf className="size-5" />
+                </div>
+                <div>
+                  <p className="font-medium">No exposures found yet</p>
+                  <p className="mt-0.5 max-w-md text-sm text-muted-foreground">
+                    Add more assets to monitor or give your first scan a few
+                    minutes to come back with results.
+                  </p>
+                </div>
+                <Button nativeButton={false} render={<Link href="/identifiers" />}>
+                  Manage identifiers
+                  <ArrowRight className="size-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           <Link
             href="/events"

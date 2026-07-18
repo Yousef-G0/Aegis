@@ -62,6 +62,7 @@ import {
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { AegisLoader } from "@/components/aegis-loader"
+import { toast } from "sonner"
 import {
   Info,
   Plus,
@@ -213,6 +214,9 @@ function CreateIdentifierSheet({
       })
       handleOpenChange(false)
       onCreated()
+      toast.success("Identifier created", {
+        description: `${type} “${value.trim()}” is now monitoring.`,
+      })
     } catch (err) {
       setFormError(
         err instanceof Error ? err.message : "Failed to create identifier",
@@ -443,8 +447,10 @@ export default function IdentifiersPage() {
         next.delete(id)
         return next
       })
+      toast.success("Identifier deleted")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete identifier")
+      toast.error("Failed to delete identifier")
     } finally {
       setDeletingId(null)
     }
@@ -491,7 +497,7 @@ export default function IdentifiersPage() {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pt-6 sm:p-8">
           {error && (
             <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
               {error}

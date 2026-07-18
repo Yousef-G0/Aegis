@@ -52,35 +52,37 @@ const configureNav = [
   },
   {
     title: "Alerts",
-    url: "#",
+    url: "/reports",
     icon: <BellIcon />,
   },
   {
     title: "Team",
     url: "#",
     icon: <UsersIcon />,
+    soon: true,
   },
   {
     title: "API Keys",
     url: "#",
     icon: <KeyRoundIcon />,
+    soon: true,
   },
 ]
 
 const helpNav = [
   {
     title: "Documentation",
-    url: "#",
+    url: "/platform/cti",
     icon: <BookOpenIcon />,
   },
   {
     title: "Support",
-    url: "#",
+    url: "/solutions/dark-web-monitoring",
     icon: <LifeBuoyIcon />,
   },
   {
     title: "Changelog",
-    url: "#",
+    url: "/platform/cti",
     icon: <FileTextIcon />,
   },
 ]
