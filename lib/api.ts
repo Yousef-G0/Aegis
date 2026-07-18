@@ -7,6 +7,9 @@ export type UserOut = {
   tenant_id: string
   email: string
   role: string
+  name?: string | null
+  bio?: string | null
+  two_factor_enabled?: boolean
   created_at: string
 }
 export type TenantOut = {
@@ -78,6 +81,88 @@ export async function getMe(token: string): Promise<UserOut> {
   })
   if (!res.ok) throw await apiError(res)
   return res.json()
+}
+
+export async function updateMe(
+  token: string,
+  payload: { name?: string | null; bio?: string | null },
+): Promise<UserOut> {
+  const res = await fetch(`${BASE}/api/v1/auth/me`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export async function changePassword(
+  token: string,
+  payload: { current_password: string; new_password: string },
+): Promise<void> {
+  const res = await fetch(`${BASE}/api/v1/auth/me/password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw await apiError(res)
+}
+
+export type NotificationConfig = {
+  id: string
+  tenant_id: string
+  channel: "email" | "webhook" | "slack"
+  target: string
+  min_severity: string
+  enabled: boolean
+}
+
+export async function getNotifications(
+  token: string,
+): Promise<NotificationConfig[]> {
+  const res = await fetch(`${BASE}/api/v1/notifications`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export async function createNotification(
+  token: string,
+  payload: {
+    channel: "email" | "webhook" | "slack"
+    target: string
+    min_severity?: string
+    enabled?: boolean
+  },
+): Promise<NotificationConfig> {
+  const res = await fetch(`${BASE}/api/v1/notifications`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw await apiError(res)
+  return res.json()
+}
+
+export async function deleteNotification(
+  token: string,
+  id: string,
+): Promise<void> {
+  const res = await fetch(`${BASE}/api/v1/notifications/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw await apiError(res)
 }
 
 export type ExposureScore = {

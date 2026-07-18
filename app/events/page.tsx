@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback, Suspense } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +19,7 @@ import { AegisLoader } from "@/components/aegis-loader"
 import { AppShellLoader } from "@/components/app-shell-loader"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { EventList } from "@/components/event-list"
+import { X } from "lucide-react"
 import {
   getToken,
   clearToken,
@@ -46,6 +47,8 @@ export default function Page() {
 
 function EventsContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const activeIdentifier = searchParams.get("identifier") ?? ""
   const [user, setUser] = useState<UserOut | null>(null)
   const [events, setEvents] = useState<EventItem[]>([])
   const [identifiers, setIdentifiers] = useState<Identifier[]>([])
@@ -63,9 +66,13 @@ function EventsContent() {
       if (opts.initial) setLoading(true)
       else setRefreshing(true)
       try {
+        const idForFilter = searchParams.get("identifier") ?? ""
         const [u, ev, idents] = await Promise.all([
           getMe(token),
-          getEvents(token, { limit: 200 }),
+          getEvents(token, {
+            limit: 200,
+            ...(idForFilter ? { identifier_id: idForFilter } : {}),
+          }),
           getIdentifiers(token),
         ])
         setUser(u)
@@ -83,12 +90,17 @@ function EventsContent() {
         setRefreshing(false)
       }
     },
-    [router],
+    [router, searchParams],
   )
 
   useEffect(() => {
     loadData({ initial: true })
   }, [loadData])
+
+  const activeIdent = identifiers.find((i) => i.id === activeIdentifier)
+  function clearIdentifierFilter() {
+    router.push("/events")
+  }
 
   if (loading) {
     return <AppShellLoader title="Events" />
@@ -133,6 +145,29 @@ function EventsContent() {
               {error}
             </p>
           )}
+
+          {activeIdent && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Filtered by</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-sm">
+                <span className="font-medium capitalize">
+                  {activeIdent.type}
+                </span>
+                <span className="text-muted-foreground">
+                  {activeIdent.name ?? activeIdent.value}
+                </span>
+                <button
+                  type="button"
+                  onClick={clearIdentifierFilter}
+                  aria-label="Clear filter"
+                  className="ml-0.5 flex size-4 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            </div>
+          )}
+
           <EventList
             events={events}
             identifiers={identifiers}

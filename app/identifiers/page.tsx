@@ -629,7 +629,7 @@ export default function IdentifiersPage() {
                           </TableCell>
                           <TableCell>
                             <Link
-                              href={`/dashboard?identifier=${encodeURIComponent(i.id)}`}
+                              href={`/events?identifier=${encodeURIComponent(i.id)}`}
                               className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
                             >
                               Events

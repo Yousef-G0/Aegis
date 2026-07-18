@@ -29,8 +29,14 @@ import {
   getToken,
   clearToken,
   getMe,
+  updateMe,
+  changePassword,
+  getNotifications,
+  createNotification,
+  deleteNotification,
   type UserOut,
 } from "@/lib/api"
+import { toast } from "sonner"
 import {
   PencilIcon,
   UserIcon,
@@ -91,6 +97,124 @@ function ProfileContent() {
   useEffect(() => {
     load()
   }, [load])
+
+  const [name, setName] = useState("")
+  const [bio, setBio] = useState("")
+  const [savingProfile, setSavingProfile] = useState(false)
+
+  // Populate fields once the user data has loaded.
+  useEffect(() => {
+    if (user) {
+      setName(user.name ?? "")
+      setBio(user.bio ?? "")
+    }
+  }, [user])
+
+  const [curPw, setCurPw] = useState("")
+  const [newPw, setNewPw] = useState("")
+  const [confirmPw, setConfirmPw] = useState("")
+  const [savingPw, setSavingPw] = useState(false)
+  const [pwError, setPwError] = useState("")
+
+  // Notification preferences: each toggle maps to an email NotificationConfig.
+  const NOTIF_MAP = [
+    { key: "security", min_severity: "critical", label: "Security alerts" },
+    { key: "weekly", min_severity: "low", label: "Weekly digest" },
+    { key: "product", min_severity: "info", label: "Product updates" },
+  ] as const
+  const [notifOn, setNotifOn] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    const token = getToken()
+    if (!token) return
+    getNotifications(token)
+      .then((configs) => {
+        const next: Record<string, boolean> = {}
+        for (const n of NOTIF_MAP) {
+          next[n.key] = configs.some(
+            (c) => c.channel === "email" && c.min_severity === n.min_severity,
+          )
+        }
+        setNotifOn(next)
+      })
+      .catch(() => {})
+  }, [])
+
+  async function toggleNotif(key: string) {
+    const token = getToken()
+    if (!token || !user) return
+    const def = NOTIF_MAP.find((n) => n.key === key)
+    if (!def) return
+    const willEnable = !notifOn[key]
+    setNotifOn((prev) => ({ ...prev, [key]: willEnable }))
+    try {
+      if (willEnable) {
+        await createNotification(token, {
+          channel: "email",
+          target: user.email,
+          min_severity: def.min_severity,
+          enabled: true,
+        })
+        toast.success(`${def.label} enabled`)
+      } else {
+        const token2 = getToken()
+        if (!token2) return
+        const configs = await getNotifications(token2)
+        const match = configs.find(
+          (c) => c.channel === "email" && c.min_severity === def.min_severity,
+        )
+        if (match) await deleteNotification(token2, match.id)
+        toast.success(`${def.label} disabled`)
+      }
+    } catch (err) {
+      setNotifOn((prev) => ({ ...prev, [key]: !willEnable }))
+      toast.error(err instanceof Error ? err.message : "Failed to update")
+    }
+  }
+
+  async function handleSaveProfile() {
+    const token = getToken()
+    if (!token) return
+    setSavingProfile(true)
+    try {
+      const updated = await updateMe(token, { name, bio })
+      setUser(updated)
+      toast.success("Profile updated")
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update profile")
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  async function handleChangePassword() {
+    setPwError("")
+    if (newPw !== confirmPw) {
+      setPwError("New passwords do not match.")
+      return
+    }
+    if (newPw.length < 8) {
+      setPwError("New password must be at least 8 characters.")
+      return
+    }
+    const token = getToken()
+    if (!token) return
+    setSavingPw(true)
+    try {
+      await changePassword(token, {
+        current_password: curPw,
+        new_password: newPw,
+      })
+      setCurPw("")
+      setNewPw("")
+      setConfirmPw("")
+      toast.success("Password updated")
+    } catch (err) {
+      setPwError(err instanceof Error ? err.message : "Failed to update password")
+    } finally {
+      setSavingPw(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -230,6 +354,15 @@ function ProfileContent() {
                 </CardHeader>
                 <CardContent className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
                   <div className="space-y-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" value={user?.email ?? ""} readOnly />
                   </div>
@@ -255,16 +388,27 @@ function ProfileContent() {
                     <textarea
                       id="bio"
                       rows={4}
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
                       placeholder="Tell us a little about yourself"
                       className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition-colors focus-visible:border-foreground"
                     />
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-end gap-3 border-t border-border p-6 sm:p-8">
-                  <Button variant="outline" disabled>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setName(user?.name ?? "")
+                      setBio(user?.bio ?? "")
+                    }}
+                    disabled={savingProfile}
+                  >
                     Cancel
                   </Button>
-                  <Button disabled>Save changes</Button>
+                  <Button onClick={handleSaveProfile} disabled={savingProfile}>
+                    {savingProfile ? "Saving…" : "Save changes"}
+                  </Button>
                 </CardFooter>
               </Card>
             </TabsContent>
@@ -280,19 +424,44 @@ function ProfileContent() {
                 <CardContent className="grid gap-6 p-6 sm:grid-cols-2 sm:p-8">
                   <div className="space-y-2">
                     <Label htmlFor="current">Current password</Label>
-                    <Input id="current" type="password" placeholder="••••••••" />
+                    <Input
+                      id="current"
+                      type="password"
+                      placeholder="••••••••"
+                      value={curPw}
+                      onChange={(e) => setCurPw(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="new">New password</Label>
-                    <Input id="new" type="password" placeholder="••••••••" />
+                    <Input
+                      id="new"
+                      type="password"
+                      placeholder="••••••••"
+                      value={newPw}
+                      onChange={(e) => setNewPw(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="confirm">Confirm new password</Label>
-                    <Input id="confirm" type="password" placeholder="••••••••" />
+                    <Input
+                      id="confirm"
+                      type="password"
+                      placeholder="••••••••"
+                      value={confirmPw}
+                      onChange={(e) => setConfirmPw(e.target.value)}
+                    />
                   </div>
+                  {pwError && (
+                    <p className="sm:col-span-2 text-sm text-destructive">
+                      {pwError}
+                    </p>
+                  )}
                 </CardContent>
                 <CardFooter className="flex justify-end border-t border-border p-6 sm:p-8">
-                  <Button disabled>Update password</Button>
+                  <Button onClick={handleChangePassword} disabled={savingPw}>
+                    {savingPw ? "Updating…" : "Update password"}
+                  </Button>
                 </CardFooter>
               </Card>
             </TabsContent>
@@ -346,7 +515,11 @@ function ProfileContent() {
                         Critical exposure and credential leaks.
                       </p>
                     </div>
-                    <Switch id="security-alerts" defaultChecked />
+                    <Switch
+                      id="security-alerts"
+                      checked={notifOn.security ?? false}
+                      onCheckedChange={() => toggleNotif("security")}
+                    />
                   </div>
                   <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
@@ -355,7 +528,11 @@ function ProfileContent() {
                         A summary of new events each week.
                       </p>
                     </div>
-                    <Switch id="weekly-digest" defaultChecked />
+                    <Switch
+                      id="weekly-digest"
+                      checked={notifOn.weekly ?? false}
+                      onCheckedChange={() => toggleNotif("weekly")}
+                    />
                   </div>
                   <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
@@ -364,11 +541,17 @@ function ProfileContent() {
                         New features and announcements.
                       </p>
                     </div>
-                    <Switch id="product-updates" />
+                    <Switch
+                      id="product-updates"
+                      checked={notifOn.product ?? false}
+                      onCheckedChange={() => toggleNotif("product")}
+                    />
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-end border-t border-border p-6 sm:p-8">
-                  <Button disabled>Save preferences</Button>
+                  <Button variant="outline" disabled>
+                    Preferences save automatically
+                  </Button>
                 </CardFooter>
               </Card>
             </TabsContent>
