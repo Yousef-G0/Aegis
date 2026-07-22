@@ -346,3 +346,19 @@ export async function deleteIdentifier(
   })
   if (!res.ok) throw await apiError(res)
 }
+
+export async function updateEventStatus(
+  token: string,
+  eventId: string,
+  status: string,
+): Promise<void> {
+  const res = await fetch(`${BASE}/api/v1/events/${eventId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  })
+  if (!res.ok) throw await apiError(res)
+}

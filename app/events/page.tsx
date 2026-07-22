@@ -2,34 +2,28 @@
 
 import { useEffect, useState, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+import Link from "next/link"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
-import { AegisLoader } from "@/components/aegis-loader"
 import { AppShellLoader } from "@/components/app-shell-loader"
+import { AegisLoader } from "@/components/aegis-loader"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { EventList } from "@/components/event-list"
-import { X } from "lucide-react"
 import {
   getToken,
   clearToken,
   getMe,
   getEvents,
-  getIdentifiers,
   type UserOut,
   type EventItem,
-  type Identifier,
 } from "@/lib/api"
+import { EventKanban } from "@/components/event-kanban"
+import { ArrowRight, Activity } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 
 export default function Page() {
   return (
@@ -48,59 +42,47 @@ export default function Page() {
 function EventsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const activeIdentifier = searchParams.get("identifier") ?? ""
   const [user, setUser] = useState<UserOut | null>(null)
   const [events, setEvents] = useState<EventItem[]>([])
-  const [identifiers, setIdentifiers] = useState<Identifier[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState("")
 
-  const loadData = useCallback(
-    async (opts: { initial?: boolean } = {}) => {
-      const token = getToken()
-      if (!token) {
+  const loadData = useCallback(async () => {
+    const token = getToken()
+    if (!token) {
+      router.replace("/sign-in")
+      return
+    }
+    setLoading(true)
+    try {
+      const [u, ev] = await Promise.all([
+        getMe(token),
+        getEvents(token, { limit: 200 }),
+      ])
+      setUser(u)
+      setEvents(ev)
+      setError("")
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load events")
+      if (err instanceof Error && /40[13]/.test(err.message)) {
+        clearToken()
         router.replace("/sign-in")
-        return
       }
-      if (opts.initial) setLoading(true)
-      else setRefreshing(true)
-      try {
-        const idForFilter = searchParams.get("identifier") ?? ""
-        const [u, ev, idents] = await Promise.all([
-          getMe(token),
-          getEvents(token, {
-            limit: 200,
-            ...(idForFilter ? { identifier_id: idForFilter } : {}),
-          }),
-          getIdentifiers(token),
-        ])
-        setUser(u)
-        setEvents(ev)
-        setIdentifiers(idents)
-        setError("")
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load events")
-        if (err instanceof Error && /40[13]/.test(err.message)) {
-          clearToken()
-          router.replace("/sign-in")
-        }
-      } finally {
-        setLoading(false)
-        setRefreshing(false)
-      }
-    },
-    [router, searchParams],
-  )
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }, [router])
 
-  useEffect(() => {
-    loadData({ initial: true })
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true)
+    loadData()
   }, [loadData])
 
-  const activeIdent = identifiers.find((i) => i.id === activeIdentifier)
-  function clearIdentifierFilter() {
-    router.push("/events")
-  }
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   if (loading) {
     return <AppShellLoader title="Events" />
@@ -115,65 +97,55 @@ function EventsContent() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar
-        user={user ? { name: user.email, email: user.email } : undefined}
-      />
+      <AppSidebar user={user ? { name: user.email, email: user.email } : undefined} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4 data-[orientation=vertical]:self-auto"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Events</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <div
+              className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary"
+            >
+              <Activity className="size-4" />
+            </div>
+            <h1 className="text-lg font-semibold">Events</h1>
           </div>
           <div className="ml-auto flex items-center gap-2 px-4">
             <ThemeToggle />
           </div>
         </header>
 
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pt-6 sm:p-8">
+        <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 pt-6 sm:p-8">
           {error && (
-            <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
               {error}
-            </p>
-          )}
-
-          {activeIdent && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Filtered by</span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted px-3 py-1 text-sm">
-                <span className="font-medium capitalize">
-                  {activeIdent.type}
-                </span>
-                <span className="text-muted-foreground">
-                  {activeIdent.name ?? activeIdent.value}
-                </span>
-                <button
-                  type="button"
-                  onClick={clearIdentifierFilter}
-                  aria-label="Clear filter"
-                  className="ml-0.5 flex size-4 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
-                >
-                  <X className="size-3" />
-                </button>
-              </span>
             </div>
           )}
 
-          <EventList
-            events={events}
-            identifiers={identifiers}
-            onRefresh={() => loadData()}
-            refreshing={refreshing}
-          />
+          {events.length === 0 && (
+            <Card className="rounded-2xl border-dashed border-border">
+              <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+                <div className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <Activity className="size-5" />
+                </div>
+                <div>
+                  <p className="font-medium">No events yet</p>
+                  <p className="mt-0.5 max-w-md text-sm text-muted-foreground">
+                    Add identifiers to start monitoring. Events will appear here as
+                    they are discovered.
+                  </p>
+                </div>
+                <Button asChild>
+                  <Link href="/identifiers">Add your first identifier</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {events.length > 0 && (
+            <div className="flex-1 min-h-0">
+              <EventKanban events={events} onRefresh={handleRefresh} refreshing={refreshing} />
+            </div>
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>
